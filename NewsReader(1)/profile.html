@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <body style="width:300px;">
+        url = "https://search.daum.net/search?nil_suggest=btn&w=tot&DA=SBC&q=%EB%A8%B8%EC%8A%A4%ED%81%AC";
+        url2 = "https://search.daum.net/search?nil_suggest=btn&w=tot&DA=SBC&q=%EA%B0%88%EB%B9%84";
+        document.location = url2;
+        window.open(document.location, _blank, "resizable=yes");
+        window.addEventListener("load", function() {
+            if(window.querySelector('#prfColl > div > div') != null &
+            window.querySelector('#daumHead > div.d_head') != null &
+            window.querySelector('#daumGnb') != null ) {
+                var target = window.querySelector('#prfColl > div > div').getBoundingClientRect();    // profile
+                var topElement = window.querySelector('#daumHead > div.d_head').getBoundingClientRect(); // header1 : searching area
+                var headerElement = window.querySelector('#daumGnb').getBoundingClientRect(); // header2 : list area
+    
+                // scroll to profile information
+                var abTop = window.pageYOffset - topElement.top - headerElement.top + target.top;
+                var abLeft = window.pageXOffset - topElement.left - headerElement.left + target.left;
+                window.scrollTo(abLeft, abTop);
+
+                // resize to only show profile information
+                profileWidth = target.width;
+                profileHeight = target.height;
+                window.resizeTo(profileWidth, profileHeight);
+                //window.innerWidth = profileWidth;
+                //window.innerHeight = profileHeight;
+                
+                //window.open(document.location);
+                //window.open(document.location, "PROFILE", "innerWidth="+profileWidth+",innerHeight="+profileHeight);
+            }
+            else{
+                window.close();
+                console.log("PROFILE DOES NOT EXISTS");
+            }
+        });
+</body>
+</html>        
+        

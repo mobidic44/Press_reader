@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title> 확장 프로그램 옵션</title>
+    <!-- Bootstrap -->
+    <link href="bootstrap/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="panel panel-default" style="width:500px;margin: 7% auto;">
+
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3> <span><img src="img/icon32.png" /></span> 뉴스리더기 프로그램</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="panel-title">Chrome 확장 프로그램 옵션</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body">
+
+                <form class="form-horizontal">
+
+                    <div class="form-group">
+                        <label for="cbEnabled" class="col-sm-3 control-label">사용유무</label>
+                        <div class="col-sm-9">
+                            <div class="span3">
+                                <label>
+                                    <input id="cbEnabled" type="checkbox"> 
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 control-label">팝업위치</label>
+                        <div class="col-sm-9">
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="radioPopupPosition" value="1" id="option1" autocomplete="off" checked> 위
+                                </label>
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="radioPopupPosition" value="0" id="option2" autocomplete="off"> 아래
+                                </label>                                
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="panel-footer">
+                <button id="save" type="submit" class="btn btn-default">저장</button>
+                <span id="status" style="margin-left:10px;padding: 3px;"></span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="jquery-ui/jquery-1.12.4.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/bootstrap.min.js"></script>
+
+    <script src="jquery-ui/jquery-ui.js"></script>
+
+    <!-- Javascript -->
+    <script src="options.js"></script>
+</body>
+</html>

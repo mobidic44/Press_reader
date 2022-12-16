@@ -1,0 +1,63 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+  "manifest_version": 2, //가이드에 따른 고정 버젼
+
+  "name": "보도자료 리더기-단어/인물/연관뉴스", //프로그램 정식명칭
+  "version": "1.0.1", 
+  "description": "보도자료 내 단어의 사전적 정의, 인물 프로필, 연관 뉴스를 제공하는 보도자료 리더기입니다.",
+  "icons": { //프로그램 아이콘 이미지(픽셀맞춰줘야함)
+    "16" : "img/icon16.png",
+    "128" : "img/icon128.png"
+  },
+      "web_accessible_resources": [
+    "img/*.png" // 3가지 기능의 아이콘 등록을 위함
+  ],
+  "permissions": [ //호스트 권한 설정
+    "activeTab",
+    "http://*/",
+    "https://*/",
+    "*://*/*", 
+    "storage" //브라우저 DB API사용권한
+  ],
+  "browser_action": {
+    "default_icon": {
+      "16": "img/icon16.png",
+      "32": "img/icon32.png"
+    },
+    "default_popup": "popup.html",
+    "default_popup": "popup2.html"
+  },
+  "content_scripts": [//css 활용 위한 j쿼리 선언
+    {
+      "all_frames": true,
+      "matches": [ "*://*/*" ],
+      "js": [
+        "jquery-ui/jquery-1.12.4.js",
+        "jquery-ui/jquery-ui.js",
+        "contentscripts.js"
+      ],
+      "css": [ 
+        "jquery-ui/jquery-ui.css",
+        "css/user.css"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [ "background.js" ]
+  },
+  "commands": { //특정 키를 통해 검색창 띄우기 위한 기능
+   "_execute_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+F"
+            },
+            "description": " 링크를 입력하세요."
+        }
+    },
+
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true,
+    "open_in_tab": true
+  }
+}
