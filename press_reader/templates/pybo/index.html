@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="press release detail view page"
+    />
+    <title>PRESS RELEASE</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  </head>
+  <body>
+    <div class="press-release-area">
+      <div id="press-release-info">
+        <div id="press-release-info-area">
+          <h1 id="press-release-title"></h1>
+          <span id="press-release-date"></span>
+        </div>
+      </div>
+      <div class="v-line"></div>
+      <div id="press-release-body-area">
+        <div id="press-release-content-area">
+          <div id="h-c-top-line"></div>
+          <h1 id="header-press-release-content">
+            보도자료
+          </h1>
+          <div id="press-release-content-outer-box">
+            <div id="press-release-content-box">
+              <iframe id="press-release-content" title="content" scrolling="no" src=""></iframe>
+            </div>
+          </div>
+          <div id="h-c-bottom-line"></div>
+        </div>
+        <div id="button">
+          <img id="button_img" src="{% static 'images/arrow_bidirection.png' %}">
+        </div>
+        <div id="related-news-area">
+          <div id="h-n-top-line"></div>
+          <h1 id="header-related-news">
+            연관뉴스
+          </h1>
+          <div id="related-news"></div>
+          <div id="h-n-bottom-line"></div>
+        </div>
+      </div>
+      <div id="top-button">
+        <img id="top-button_img" src="{% static 'images/top_button.png' %}">
+      </div>
+      <script>
+        //////////////////////////////////////////////////////////////////////
+//
+//  Classes
+//
+//////////////////////////////////////////////////////////////////////
+class News {
+    constructor(news_num, titles, descriptions, urls, dates, presses, similarities){
+        this.news_num = news_num;
+        this.articles = new Array();
+        for(var i = 0; i < news_num; i++){
+            this.articles[i] = new Article(titles[i], descriptions[i], urls[i], dates[i], presses[i], similarities[i]);
+        }
+    }
+
+    getArticleTitleByIndex(i){
+        return this.articles[i].articleTitle;
+    }
+
+    getArticleDescriptionByIndex(i){
+        return this.articles[i].articleDescription;
+    }
+
+    getArticleUrlByIndex(i){
+        return this.articles[i].articleUrl;
+    }
+
+    getArticleDateByIndex(i){
+        return this.articles[i].articleDate;
+    }
+
+    getArticlePressByIndex(i){
+        return this.articles[i].articlePress;
+    }
+
+    getArticleSimilarityByIndex(i){
+        return this.articles[i].articleSimilarity;
+    }
+};
+
+class Article {
+    constructor(title, description, news_url, date, press, similarity){
+        this.url = news_url;
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.press = press;
+        this.similarity = similarity;
+    }
+
+    get articleTitle(){
+        return this.title;
+    }
+
+    get articleDescription() {
+        return this.description;
+    }
+
+    get articleUrl(){
+        return this.url;
+    }
+
+    get articleDate(){
+        return this.date;
+    }
+
+    get articlePress(){
+        return this.press;
+    }
+
+    get articleSimilarity(){
+        return this.similarity;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//
+//  get values from views.py
+//
+//////////////////////////////////////////////////////////////////////
+const press_release_preview_page_url = "{{pressInfo.url}}".replace("&amp;", "&");
+const press_release_title = "{{pressInfo.title}}";
+const press_release_date = "{{pressInfo.date}}";
+
+const news_num = {{newsInfo.news_num}};
+const related_news_titles = {{newsInfo.newsTitles|safe}};
+const related_news_descriptions = {{newsInfo.newsDescriptions|safe}};
+const related_news_url = {{newsInfo.newsUrls|safe}};
+const related_news_date = {{newsInfo.newsDates|safe}};
+const related_news_press = {{newsInfo.newsPresses|safe}};
+const related_news_similarity = {{newsInfo.newsSimilarities|safe}};
+const news_object = new News(news_num, related_news_titles, related_news_descriptions, related_news_url, related_news_date, related_news_press, related_news_similarity);
+
+
+//////////////////////////////////////////////////////////////////////
+//
+//  set html values
+//
+//////////////////////////////////////////////////////////////////////
+document.getElementById("press-release-content").src = press_release_preview_page_url;
+document.getElementById("press-release-title").innerText = press_release_title;
+document.getElementById("press-release-date").innerText = press_release_date;
+
+
+for (let i = 0; i < news_num; i++){
+    let id = i;
+    let title = news_object.getArticleTitleByIndex(i);
+    let description = news_object.getArticleDescriptionByIndex(i);
+    let url = news_object.getArticleUrlByIndex(i);
+    let date = news_object.getArticleDateByIndex(i);
+    let press = news_object.getArticlePressByIndex(i);
+    let similarity = news_object.getArticleSimilarityByIndex(i);
+    document.getElementById("related-news").innerHTML += `
+    <hr>
+    <div class='article-item' id='news${id}' onclick=''>
+        <div class='article-item-title' id='news-title${id}'>
+            ${title}
+        </div>
+        <p class="article-item-detailinfo">
+            ${date} ${press} (유사도: ${parseInt(similarity * 100)}%)
+        </p>
+        <p class='article-item-description' id='news-description${id}'>
+            ${description}...
+        </p>
+    </div>`;
+    document.getElementById(`news${id}`).setAttribute('onclick', `window.open('${url}', '${title}');`);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////
+//
+//  animation
+//
+//////////////////////////////////////////////////////////////////////
+// 버튼 클릭 이벤트 : 보도자료<->연관뉴스 페이지 이동
+var isLeftClick = false;
+document.getElementById('button').addEventListener('click', (event) => {
+    // 위로 이동
+    let targetHeight = 580;
+    let currentY = window.pageYOffset;
+    if (currentY - targetHeight > 0){
+        scrollBy(0, -(currentY - targetHeight));    // 애니메이션 효과 없이 바로 이동
+    }
+
+    // 좌우 이동
+    const element = document.getElementById('press-release-body-area');
+    let translate_amount = 0;
+    if (isLeftClick === false) {
+        translate_amount = -1030;
+    }
+    element.animate(
+        {
+            transform: `translateX(${translate_amount}px)`
+        },
+        {
+            duration: 500, // 밀리초 지정
+            fill: 'forwards', // 종료 시 속성을 지님
+            easing: 'ease', // 가속도 종류
+        }
+    );
+    isLeftClick = !isLeftClick;
+});
+
+// 화살표 버튼에 마우스 오버 시, 강조 표시
+document.getElementById('button').addEventListener("mouseover", function (event) {
+    event.target.style.backgroundColor = "rgba(227, 227, 227, 0.4)";
+}, false);
+document.getElementById('button').addEventListener("mouseout", function(event){
+    event.target.style.backgroundColor = "rgba(227, 227, 227, 0)";
+}, false);
+
+document.getElementById('top-button').addEventListener('click', (event) => {
+    // 위로 이동
+    let targetHeight = 580;
+    let currentY = window.pageYOffset;
+    let moveAmount = currentY - targetHeight;
+    if (moveAmount > 0){
+        scrollBy(0, -moveAmount);    // 애니메이션 효과 없이 바로 이동
+    }
+});
+// top 버튼에 마우스 오버 시, 강조 표시
+document.getElementById('top-button').addEventListener("mouseover", function (event) {
+    event.target.style.backgroundColor = "rgba(227, 227, 227, 0.4)";
+}, false);
+document.getElementById('top-button').addEventListener("mouseout", function(event){
+    event.target.style.backgroundColor = "rgba(227, 227, 227, 0)";
+}, false);
+
+// 마우스 오버된 뉴스 강조 표시
+for(let i = 0; i < news_num; i++){
+    let element = document.getElementById(`news${i}`);
+
+    element.addEventListener("mouseover", function (event) {
+        element.style.backgroundColor = "rgba(227, 227, 227, 0.6)";
+    }, false);
+
+    element.addEventListener("mouseout", function(event){
+        element.style.backgroundColor = "rgba(227, 227, 227, 0.2)";
+    }, false);
+}
+
+function resizeEvent(){
+    let windowWidth = window.innerWidth;
+    let contentWidth = document.getElementById('press-release-content-area').clientWidth;
+    let marginValue = (windowWidth - contentWidth) / 2;
+    this.document.getElementById('press-release-body-area').style.marginLeft=`${marginValue}px`;
+}
+// 초기 화면 위치
+window.addEventListener("load", function (event) {
+    resizeEvent();
+    document.getElementById('top-button').style.visibility = 'hidden';
+}, false);
+window.addEventListener("resize", function (event){
+    resizeEvent();
+}, false);
+
+
+// top-button 나타남/사라짐 효과
+const top_button = document.getElementById('top-button');
+window.addEventListener('scroll', (event) => {
+    if (window.pageYOffset > 600){
+        top_button.style.visibility = 'visible';
+    }
+    else {
+        top_button.style.visibility = 'hidden';
+    }
+});
+        </script>
+    </div>
+  </body>
+</html>
